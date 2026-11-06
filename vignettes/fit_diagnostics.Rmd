@@ -1,0 +1,88 @@
+---
+title: "Model fit diagnostics"
+output:
+  html_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Model fit diagnostics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8,
+  fig.height = 5,
+  out.width = "100%"
+)
+```
+
+```{r setup}
+library(stockplotr)
+```
+
+Integrated assessment models such as FIMS and Stock Synthesis are fit to
+many data sources at once, including landings and fishery and survey
+indices of abundance. {stockplotr} has a set of diagnostic plots for these
+fits that work the same way for each model. They are based on the figures
+from [r4ss](https://github.com/r4ss/r4ss) and on diagnostics from
+[JABBA](https://github.com/jabbamodel/JABBA) and
+[ss3diags](https://github.com/PIFSCstockassessments/ss3diags).
+
+| Diagnostic | Function | What it shows | Equivalent in other packages |
+|------|----------|---------------|-----------------|
+| Index fit | `plot_index_fit()` | Observed indices with intervals and the expected index | r4ss: `SSplotIndices()` subplots 2 and 5 |
+| Landings fit | `plot_landings_fit()` | Observed and expected landings | r4ss: `SSplotCatch()` |
+
+## Input data
+
+Each function takes the output of a model directly:
+
+- **FIMS**: the output of `FIMS::get_estimates()` (on its own or passed
+  through `convert_output()`), or the `FIMSFit` object itself. FIMS reports
+  years as indices (1 = first model year), so use `start_year` to label the
+  x-axis with years.
+- **Stock Synthesis**: the output of `convert_output()`, or the list returned
+  by `r4ss::SS_output()`.
+- **Other models**: the output of `convert_output()`, or a tidy data frame
+  (see `?prepare_fit_data`).
+
+Indices and landings are first reshaped with `prepare_fit_data()`, which
+returns the observed and expected values, the observation error, and the
+residuals. Call it directly to inspect the data behind any of the plots:
+
+```{r}
+fits <- prepare_fit_data(example_data)
+head(fits)
+```
+
+The examples below use the Stock Synthesis model in `example_data`. The same
+calls work for FIMS; for example, with the FIMS example model:
+
+```{r, eval = FALSE}
+data("estimates_big_optimized", package = "FIMS")
+fims <- estimates_big_optimized
+plot_index_fit(fims, start_year = 2001)
+```
+
+Each plot can be saved with a caption and alternative text that describe
+the data and options used to make it, with `make_rda = TRUE` (see
+`vignette("how-caps-alttext-are-made")`).
+
+## Fits to indices and landings
+
+```{r}
+plot_index_fit(example_data)
+plot_index_fit(example_data, log = TRUE)
+```
+
+Indices with lognormal errors are often easier to judge on a log scale,
+where the intervals are symmetric.
+
+Landings are usually fit closely; large residuals indicate a problem.
+
+```{r}
+plot_landings_fit(example_data)
+```

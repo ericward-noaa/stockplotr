@@ -163,7 +163,7 @@ convert_output <- function(
         cli::cli_abort("Unknown file type. Please indicate model.")
       )
     }
-  } else {
+  } else if (is.null(model)) {
     model <- switch(class(file)[1],
       "fims" = {
         cli::cli_alert_info("Processing FIMS output file...")
