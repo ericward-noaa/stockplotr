@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stockplotr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.15.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.16.0.9000</span>
       </span>
     </div>
 
@@ -102,30 +102,36 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">convert_output</span><span class="op">(</span><span class="va">file</span>, model <span class="op">=</span> <span class="cn">NULL</span>, fleet_names <span class="op">=</span> <span class="cn">NULL</span>, save_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">convert_output</span><span class="op">(</span><span class="va">files</span>, models <span class="op">=</span> <span class="cn">NULL</span>, fleet_names <span class="op">=</span> <span class="cn">NULL</span>, save_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
-<dd><p>Path. Assessment model output file path. Currently accepts SS3
-<code>r4ss::ss_output()</code> or Report.sso file (being deprecated), BAM .rda file, Rceattle model object, and FIMS model object.</p></dd>
+<dl><dt id="arg-files">files<a class="anchor" aria-label="anchor" href="#arg-files"></a></dt>
+<dd><p>List of Paths. Assessment model output file paths. Currently accepts SS3
+<code>r4ss::ss_output()</code> or Report.sso file (being deprecated), BAM .rda file, Rceattle model object,
+and FIMS output (the tibble returned by <code><a href="https://NOAA-FIMS.github.io/FIMS/reference/get_FIMSFit.html" class="external-link">FIMS::get_estimates()</a></code>, a <code>FIMSFit</code> object, or an
+.rds file with either). If multiple elements, all valid models will be read, converted, and
+appended together.</p>
+<p><code>names(files)</code> will be used as the name of the model in the output.</p></dd>
 
 
-<dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
-<dd><p>String. Assessment model used in evaluation</p>
+<dt id="arg-models">models<a class="anchor" aria-label="anchor" href="#arg-models"></a></dt>
+<dd><p>Character vector Assessment model used in evaluation</p>
 <p>Default: NULL</p>
-<p>Options: "ss3", "bam", "fims", "rceattle"</p></dd>
+<p>Options: "ss3", "bam", "fims", "rceattle"</p>
+<p>Should match length of <code>files</code>.</p></dd>
 
 
 <dt id="arg-fleet-names">fleet_names<a class="anchor" aria-label="anchor" href="#arg-fleet-names"></a></dt>
-<dd><p>Character vector. Names of fleets in the assessment model as
+<dd><p>List of Character vectors. Names of fleets in the assessment model as
 shortened in the output file or names of fleets to replace the native fleet
 names in the output. For example, if fleet names in the model are 1, 2, 3
 then fleet_names = c("fleet1" = 1, "fleet2" = 2, "fleet3" = 3).</p>
-<p>Default: NULL</p></dd>
+<p>Default: NULL</p>
+<p>Should match length of <code>files</code>.</p></dd>
 
 
 <dt id="arg-save-dir">save_dir<a class="anchor" aria-label="anchor" href="#arg-save-dir"></a></dt>
@@ -133,6 +139,13 @@ then fleet_names = c("fleet1" = 1, "fleet2" = 2, "fleet3" = 3).</p>
 saved file name is not indicated, the file will be saved as "std_output.rda"
 in the file path provided.</p>
 <p>Default: NULL</p></dd>
+
+
+<dt id="arg-start-year">start_year<a class="anchor" aria-label="anchor" href="#arg-start-year"></a></dt>
+<dd><p>Number. First year of the model, for FIMS output only.
+FIMS reports years as indices (1 = first model year), which are converted
+to years when <code>start_year</code> is given.</p>
+<p>Default: NULL (years are left as indices)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -146,6 +159,13 @@ adapt results among regional assessments.</p>
     <p>The resulting object is a long-format, transformed and machine readable
 version of a model output file. Converted data frame is always returned.
 It will also be saved if save_dir is not NULL.</p>
+<p>For FIMS, each data point (index, landings, and age and length
+compositions) is split into an observed row (e.g., "index_observed") and a
+predicted row (e.g., "index_predicted"), as for the other models. Observed
+rows hold the observation error (a log-scale standard error for lognormal
+data) in <code>uncertainty</code> and the negative log-likelihood in <code>likelihood</code>.
+Other estimates are relabeled with <code>fims_var_names.csv</code> (e.g.,
+"expected_recruitment" becomes "recruitment").</p>
     </div>
     <div id="author">
     <h2>Author</h2>
@@ -159,6 +179,12 @@ It will also be saved if save_dir is not NULL.</p>
 <span class="r-in"><span>  file <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"model1"</span>, <span class="st">"Report.sso"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  model <span class="op">=</span> <span class="st">"ss3"</span>,</span></span>
 <span class="r-in"><span>  fleet_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TWL"</span>, <span class="st">"NONTWL"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  save_dir <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"standard_output.rda"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">convert_output</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"model1"</span><span class="op">=</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"model1"</span>, <span class="st">"Report.sso"</span><span class="op">)</span>, <span class="st">"model2"</span><span class="op">=</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"model2"</span>, <span class="st">"Report.sso"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ss3"</span>, <span class="st">"ss3"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  fleet_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"model1"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TWL"</span>, <span class="st">"NONTWL"</span><span class="op">)</span>, <span class="st">"model2"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Fishery1"</span>, <span class="st">"Survey1"</span>, <span class="st">"Survey2"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  save_dir <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"standard_output.rda"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>

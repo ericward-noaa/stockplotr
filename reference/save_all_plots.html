@@ -20,7 +20,7 @@ plotting functions for greater customization of figures and tables."><!-- mathja
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stockplotr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.15.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.16.0.9000</span>
       </span>
     </div>
 
@@ -135,6 +135,12 @@ in <code>ref_line</code> is used to plot a reference line or calculate relative 
 <p>Default: <code>FALSE</code></p></dd>
 
 
+<dt id="arg-figures-tables-dir">figures_tables_dir<a class="anchor" aria-label="anchor" href="#arg-figures-tables-dir"></a></dt>
+<dd><p>Path. Directory where the rda files are saved,
+in "figures" and "tables" folders that are created if needed.</p>
+<p>Default: the working directory (<code><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd()</a></code>)</p></dd>
+
+
 <dt id="arg-plot-recruitment-options">plot_recruitment_options<a class="anchor" aria-label="anchor" href="#arg-plot-recruitment-options"></a></dt>
 <dd><p>List. List object of parameter values to pass
 directly to the <code>plot_recruitment</code> function. All default parameters for the
@@ -201,14 +207,14 @@ translated to a standardized output (<a href="convert_output.html">convert_outpu
 <span class="r-in"><span>   figures_tables_dir <span class="op">=</span> <span class="fu">fs</span><span class="fu">::</span><span class="fu"><a href="https://fs.r-lib.org/reference/path.html" class="external-link">path</a></span><span class="op">(</span><span class="st">"outputs/figures"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>   plot_recruitment_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>     module <span class="op">=</span> <span class="st">"TIME_SERIES"</span>,</span></span>
-<span class="r-in"><span>     unit_label <span class="op">=</span> <span class="st">"Millions of Recruits"</span> <span class="co"># customize unit label for recruitment plot</span></span></span>
+<span class="r-in"><span>     unit_label <span class="op">=</span> <span class="st">"mt"</span></span></span>
 <span class="r-in"><span>   <span class="op">)</span>,</span></span>
 <span class="r-in"><span>   plot_spawning_biomass_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>     ref_line <span class="op">=</span> <span class="st">"unfished"</span>     <span class="co"># customize reference line for spawning biomass plot</span></span></span>
 <span class="r-in"><span>   <span class="op">)</span>,</span></span>
 <span class="r-in"><span>   plot_abundance_at_age_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>     scale_amount <span class="op">=</span> <span class="fl">1</span>,         <span class="co"># custom scale for abundance-at-age plot</span></span></span>
-<span class="r-in"><span>     proportional <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># don't proportionalize abundance-at-age </span></span></span>
+<span class="r-in"><span>     proportional <span class="op">=</span> <span class="cn">FALSE</span>      <span class="co"># don't proportionalize abundance-at-age</span></span></span>
 <span class="r-in"><span>   <span class="op">)</span>,</span></span>
 <span class="r-in"><span>   plot_spr_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>     ylab <span class="op">=</span> <span class="st">"Fishing Intensity (1-SPR)/(1-SPR_ref)"</span> <span class="co"># custom Y label for SPR plot</span></span></span>
